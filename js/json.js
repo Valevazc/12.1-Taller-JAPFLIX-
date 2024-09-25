@@ -41,7 +41,6 @@ function mostrarPeliculas(peliculas) {
     let lista = document.getElementById('lista');
     lista.innerHTML = ''; 
 
-   
     if (peliculas.length > 0) {
         peliculas.forEach(pelicula => {
             let item = document.createElement('li');
@@ -50,13 +49,47 @@ function mostrarPeliculas(peliculas) {
                 <h3>${pelicula.title}</h3>
                 <p>${pelicula.tagline}</p>
                 <p>${generarEstrellas(pelicula.vote_average)}</p>
+                <button class="btn btn-secondary" id="btnInfo-${pelicula.id}">Información Adicional</button>
+                <div id="infoAdicional-${pelicula.id}" style="display: none;">
+                    <p><strong>Año de Lanzamiento:</strong> ${new Date(pelicula.release_date).getFullYear()}</p>
+                    <p><strong>Duración:</strong> ${pelicula.runtime} minutos</p>
+                    <p><strong>Presupuesto:</strong> $${pelicula.budget}</p>
+                    <p><strong>Ganancias:</strong> $${pelicula.revenue}</p>
+                </div>
             `;
+
+            item.addEventListener('click', () => mostrarDetalles(pelicula));
+
+            
+            const btnInfo = item.querySelector(`#btnInfo-${pelicula.id}`);
+            btnInfo.addEventListener('click', (event) => {
+                const infoAdicional = item.querySelector(`#infoAdicional-${pelicula.id}`);
+                infoAdicional.style.display = infoAdicional.style.display === 'none' ? 'block' : 'none';
+            });
+
+            // detalles de la película
+            function mostrarDetalles(pelicula) {
+                let contenedorDetalles = document.getElementById('contenedorDetalles');
+                contenedorDetalles.innerHTML = ''; 
+            
+                let genresList = pelicula.genres.map(genre => genre.name).join(', ');
+            
+                contenedorDetalles.innerHTML = `
+                    <h2>${pelicula.title}</h2>
+                    <p>${pelicula.overview}</p>
+                    <p><strong>Géneros:</strong> ${genresList}</p>
+                `;
+            
+                contenedorDetalles.style.display = 'block'; // Muestra el contenedor
+            }
+
             lista.appendChild(item); 
         });
     } else {
         lista.innerHTML = '<li class="list-group-item bg-dark text-light">No se encontraron resultados</li>';
     }
 }
+
 
 
 function generarEstrellas(vote_average) {
